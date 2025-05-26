@@ -2,15 +2,19 @@
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   server.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: tamutlu <tamutlu@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/26 19:24:35 by tamutlu           #+#    #+#             */
-/*   Updated: 2025/05/26 19:24:35 by tamutlu          ###   ########.fr       */
+/*                                                    +:+ +:+        
+	+:+     */
+/*   By: tamutlu <tamutlu@student.42.fr>            +#+  +:+      
+	+#+        */
+/*                                                +#+#+#+#+#+  
+	+#+           */
+/*   Created: 2025/05/27 00:19:11 by tamutlu           #+#    #+#             */
+/*   Updated: 2025/05/27 00:19:11 by tamutlu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
+
 /* Signal handler to process SIGUSR1 and SIGUSR2
    Stores the char being built from bits
    Tracks number of bits received
@@ -20,12 +24,18 @@
    If 8 bits were received (full byte)
    Print char
    Reset char to 0 for next byte
-   Reset bit counter to 0 */
-void	take_msg(int sig)
+   Reset bit counter to 0
+*/
+
+void	take_msg(int sig, siginfo_t *info, void *context)
 {
 	static unsigned char	c;
 	static int				i;
 
+	c = 0;
+	i = 0;
+	(void)context;
+	c = c << 1;
 	if (sig == SIGUSR1)
 		c = c | 1;
 	i++;
@@ -38,12 +48,10 @@ void	take_msg(int sig)
 		c = 0;
 		i = 0;
 	}
-	c = c << 1;
+	if (info && info->si_pid)
+		kill(info->si_pid, SIGUSR1);
 }
-/*
-Ensure system calls are restarted if interrupted
-Clear signal mask
-*/
+// Send SIGUSR1 back to client as ACK
 
 int	main(void)
 {
@@ -52,8 +60,8 @@ int	main(void)
 	ft_putstr_fd("Server PID: ", 1);
 	ft_putnbr_fd(getpid(), 1);
 	ft_putchar_fd('\n', 1);
-	sa.sa_handler = take_msg;
-	sa.sa_flags = 0;
+	sa.sa_sigaction = take_msg;
+	sa.sa_flags = SA_SIGINFO;
 	sigemptyset(&sa.sa_mask);
 	if (sigaction(SIGUSR1, &sa, NULL) == -1 || sigaction(SIGUSR2, &sa, NULL)
 		== -1)
@@ -65,15 +73,3 @@ int	main(void)
 		pause();
 	return (0);
 }
-
-// int	main(void)
-// {
-// 	ft_putstr_fd("Server PID: ", 1);
-// 	ft_putnbr_fd(getpid(), 1);
-// 	ft_putchar_fd('\n', 1);
-// 	signal(SIGUSR1, take_msg);
-// 	signal(SIGUSR2, take_msg);
-// 	while (1)
-// 		pause();
-// 	return (0);
-// }

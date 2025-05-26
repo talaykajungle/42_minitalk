@@ -5,12 +5,13 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: tamutlu <tamutlu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/26 21:03:02 by tamutlu           #+#    #+#             */
-/*   Updated: 2025/05/26 21:03:02 by tamutlu          ###   ########.fr       */
+/*   Created: 2025/05/27 00:22:01 by tamutlu           #+#    #+#             */
+/*   Updated: 2025/05/27 00:22:01 by tamutlu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
+
 /*
 About the function binary:
 Sends a string to a process (pid) by converting chars to binary and using signals
@@ -27,6 +28,42 @@ Structure of the code:
 9. Moves to next bit
 10. Moves to next char
 */
+
+volatile sig_atomic_t	g_ack = 0;
+
+void	ack_handler(int sig)
+{
+	if (sig == SIGUSR1)
+		g_ack = 1;
+	else if (sig == SIGUSR2)
+		g_ack = 0;
+	else
+		ft_putstr_fd("Error: Unexpected signal received\n", 2);
+}
+
+static void	send_bit(int pid, int bit)
+{
+	g_ack = 0;
+	if (bit)
+	{
+		if (kill(pid, SIGUSR1) == -1)
+		{
+			ft_putstr_fd("Error: SIGUSR1\n", 2);
+			exit(1);
+		}
+	}
+	else
+	{
+		if (kill(pid, SIGUSR2) == -1)
+		{
+			ft_putstr_fd("Error: SIGUSR2\n", 2);
+			exit(1);
+		}
+	}
+	while (!g_ack)
+		pause();
+}
+
 static void	send_char_bits(int pid, unsigned char c)
 {
 	int	i;
@@ -34,23 +71,7 @@ static void	send_char_bits(int pid, unsigned char c)
 	i = 7;
 	while (i >= 0)
 	{
-		if ((c >> i) & 1)
-		{
-			if (kill(pid, SIGUSR1) == -1)
-			{
-				ft_putstr_fd("Error: SIGUSR1\n", 2);
-				exit(1);
-			}
-		}
-		else
-		{
-			if (kill(pid, SIGUSR2) == -1)
-			{
-				ft_putstr_fd("Error: SIGUSR2\n", 2);
-				exit(1);
-			}
-		}
-		usleep(100);
+		send_bit(pid, (c >> i) & 1);
 		i--;
 	}
 }
@@ -70,8 +91,13 @@ static void	send_message(int pid, char *str)
 
 int	main(int argc, char **argv)
 {
-	int	pid;
+	struct sigaction	sa;
+	int					pid;
 
+	sa.sa_handler = ack_handler;
+	sa.sa_flags = 0;
+	sigemptyset(&sa.sa_mask);
+	sigaction(SIGUSR1, &sa, NULL);
 	if (argc != 3)
 	{
 		ft_putstr_fd("Usage: ./client <PID> <message>\n", 1);
@@ -88,6 +114,6 @@ int	main(int argc, char **argv)
 		ft_putstr_fd("Error: Empty message\n", 1);
 		return (1);
 	}
-	send_message (pid, argv[2]);
+	send_message(pid, argv[2]);
 	return (0);
 }
