@@ -10,6 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <signal.h>
-#include <unistd.h>
-#include <stdio.h>
+#ifndef MINITALK_H
+# define MINITALK_H
+# define MAX_STRLEN 2147483647
+
+# include <unistd.h>
+# include <stdlib.h>
+# include <signal.h>
+# include <limits.h>
+
+#endif
