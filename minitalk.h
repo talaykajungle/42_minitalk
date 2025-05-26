@@ -5,18 +5,22 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: tamutlu <tamutlu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/23 19:20:45 by tamutlu           #+#    #+#             */
-/*   Updated: 2025/05/23 19:43:36 by tamutlu          ###   ########.fr       */
+/*   Created: 2025/05/26 19:25:31 by tamutlu           #+#    #+#             */
+/*   Updated: 2025/05/26 19:25:31 by tamutlu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINITALK_H
 # define MINITALK_H
-# define MAX_STRLEN 2147483647
 
-# include <unistd.h>
-# include <stdlib.h>
 # include <signal.h>
-# include <limits.h>
+# include <stdlib.h>
+# include <unistd.h>
+
+void	ft_putstr_fd(char *s, int fd);
+void	ft_putchar_fd(char c, int fd);
+void	ft_putnbr_fd(int n, int fd);
+int		ft_atoi(const char *str);
+size_t	ft_strlen(const char *s);
 
 #endif

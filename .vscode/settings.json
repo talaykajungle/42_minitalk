@@ -1,8 +1,8 @@
 {
-  "editor.quickSuggestions": false,
-  "editor.suggestOnTriggerCharacters": false,
+  // "editor.quickSuggestions": false,
+  // "editor.suggestOnTriggerCharacters": false,
   "editor.inlineSuggest.enabled": false,
-  "editor.autoClosingQuotes": "never",
+  // "editor.autoClosingQuotes": "never",
 
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",
@@ -62,5 +62,9 @@
   "C_Cpp_Runner.useLinkTimeOptimization": false,
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
   "makefile.makefilePath": "C:\\msys64\\ucrt64\\bin",
-  "C_Cpp.copilotHover": "disabled"
+  "C_Cpp.copilotHover": "disabled",
+  "files.associations": {
+    "minitalk.h": "c"
+  },
+  "C_Cpp.errorSquiggles": "disabled"
 }
