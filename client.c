@@ -60,6 +60,7 @@ static void	send_bit(int pid, int bit)
 			exit(1);
 		}
 	}
+	usleep(500);
 	while (!g_ack)
 		pause();
 }

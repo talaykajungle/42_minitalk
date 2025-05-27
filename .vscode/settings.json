@@ -64,7 +64,8 @@
   "makefile.makefilePath": "C:\\msys64\\ucrt64\\bin",
   "C_Cpp.copilotHover": "disabled",
   "files.associations": {
-    "minitalk.h": "c"
+    "minitalk.h": "c",
+    "random": "c"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }

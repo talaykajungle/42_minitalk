@@ -32,8 +32,6 @@ void	take_msg(int sig, siginfo_t *info, void *context)
 	static unsigned char	c;
 	static int				i;
 
-	c = 0;
-	i = 0;
 	(void)context;
 	c = c << 1;
 	if (sig == SIGUSR1)
